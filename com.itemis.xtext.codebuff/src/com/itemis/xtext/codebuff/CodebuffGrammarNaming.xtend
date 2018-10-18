@@ -1,0 +1,33 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG (http://www.itemis.eu) and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package com.itemis.xtext.codebuff
+
+import org.eclipse.xtext.Grammar
+import org.eclipse.xtext.xtext.generator.parser.antlr.AntlrGrammar
+import org.eclipse.xtext.xtext.generator.parser.antlr.GrammarNaming
+
+/**
+ * @author Holger Schill - Initial contribution and API
+ */
+class CodebuffGrammarNaming extends GrammarNaming {
+	override getInternalParserSuperClass(Grammar it) {
+		null
+	}
+	
+	override isCombinedGrammar(Grammar it) {
+		true
+	}
+	
+	override protected getGrammarNamePrefix(Grammar it) {
+		"Codebuff"
+	}
+	
+	override  AntlrGrammar getParserGrammar(Grammar it) {
+		new Antlr4Grammar(internalParserPackage, '''«grammarNamePrefix»«IF !combinedGrammar»Parser«ENDIF»''')
+	}
+}
