@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: com.itemis.xtext.codebuff
-Bundle-SymbolicName: com.itemis.xtext.codebuff
+Bundle-Name: org.xtext.example.mydsl.antlr4.generator
+Bundle-SymbolicName: org.xtext.example.mydsl.antlr4.generator
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: ITEMIS
-Automatic-Module-Name: com.itemis.xtext.codebuff
+Automatic-Module-Name: org.xtext.example.mydsl.antlr4.generator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.xtext.xtext.generator;bundle-version="2.14.0",
  org.apache.log4j;bundle-version="1.2.15",

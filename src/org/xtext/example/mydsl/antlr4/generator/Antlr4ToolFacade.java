@@ -5,34 +5,48 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package com.itemis.xtext.codebuff;
+package org.xtext.example.mydsl.antlr4.generator;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.WrappedException;
 
-public class CodebuffToolFacade {
+import com.google.common.collect.Lists;
 
-	private final static Logger log = Logger.getLogger(CodebuffToolFacade.class);
+public class Antlr4ToolFacade {
 
-	public final static String className = "org.antlr.codebuff.Tool";
+	private static final String SRC_GEN = "/src-gen/";
 
-	private ClassLoader loader = CodebuffToolFacade.class.getClassLoader();
+	private final static Logger log = Logger.getLogger(Antlr4ToolFacade.class);
+
+	public final static String className = "org.antlr.v4.Tool";
+
+	private ClassLoader loader = Antlr4ToolFacade.class.getClassLoader();
 
 	public void setLoader(ClassLoader loader) {
 		this.loader = loader;
 	}
 
-	private String downloadURL = "https://github.com/holgerschill/codebuff_mirror/raw/master/codebuff-1.5.1.jar";
+	private String downloadURL = "https://www.antlr.org/download/antlr-4.7.2-complete.jar";
 	private boolean askBeforeDownload = true;
-
+	
+	public static final String ANTLR4GEN = "antlr4gen";
+	public static final String TARGETFOLDER = ANTLR4GEN + "/target/";
+	
 	public void setAskBeforeDownload(boolean shouldAsk) {
 		this.askBeforeDownload = shouldAsk;
 	}
@@ -41,7 +55,11 @@ public class CodebuffToolFacade {
 		this.downloadURL = downloadURL;
 	}
 
-	public static final String downloadTo = "./codebuff-1.5.1.jar";
+	private String downloadTo = "./antlr-4.jar";
+
+	public void setDownloadTo(String path) {
+		this.downloadTo = path;
+	}
 
 	protected File file() {
 		return new File(downloadTo);
@@ -62,11 +80,9 @@ public class CodebuffToolFacade {
 			}
 			if (file().exists()) {
 				try {
-					File targetFolder = new File(Antlr4ToolFacade.TARGETFOLDER);
-					if(!targetFolder.exists())
-						return null;
 					URL url = file().toURI().toURL();
 					loader = new URLClassLoader(new URL[] { url }, null);
+
 					return loader;
 
 				} catch (MalformedURLException e1) {
@@ -83,7 +99,7 @@ public class CodebuffToolFacade {
 				boolean ok = false;
 				while (!ok) {
 					System.err.print(
-							"\n*ATTENTION*\nIt is recommended to use Codebuff (BSD licence - http://www.antlr.org/license.html).\nDo you agree to download it (size 1MB) from '"
+							"\n*ATTENTION*\nIt is recommended to use the ANTLR 4 parser generator (BSD licence - http://www.antlr.org/license.html).\nDo you agree to download it (size 1MB) from '"
 									+ downloadURL + "'? (type 'y' or 'n' and hit enter)");
 					int read = System.in.read();
 					if (read == 'n') {
@@ -111,7 +127,7 @@ public class CodebuffToolFacade {
 			}
 			log.info("finished downloading.");
 		} catch (IOException e) {
-			System.err.println("Downloading Codebuff failed: " + e.getMessage());
+			System.err.println("Downloading ANTLR4 parser generator failed: " + e.getMessage());
 			return false;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -125,21 +141,45 @@ public class CodebuffToolFacade {
 	}
 
 	private IllegalStateException getNoClassFoundException() {
-		return new IllegalStateException("Couldn't find Codebuff on class path. Please download manually from '"
+		return new IllegalStateException("Couldn't find ANTLR generator on class path. Please download manually from '"
 				+ downloadURL + "' and put it on the classpath.");
 	}
 
-	public void initializeCodebuff() {
+	public void runWithEncodingAndParams(String grammarFullPath, String explicitEncoding) {
 		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 		try {
 			ClassLoader myLoader = initializedClassLoader();
 			Thread.currentThread().setContextClassLoader(myLoader);
-			Class<?> tool = myLoader.loadClass(className);
+			Class<?> class1 = myLoader.loadClass(className);
 
-			if (tool == null)
-				throw getNoClassFoundException();	
+			if (class1 == null)
+				throw getNoClassFoundException();
 
+			Object[] args = new Object[] { new String[] { grammarFullPath, "-o", ANTLR4GEN + SRC_GEN, "-Dlanguage=Python3" } };
+			Constructor<?> constructor = class1.getConstructor(new Class[] { String[].class });
+			Object newInstance = constructor.newInstance(args);
+			log.info("Loading AntLR 4 grammar.");
+			//Method process = class1.getMethod("process", new Class[] { grammar.getClass(), boolean.class });
+			Method process = class1.getMethod("processGrammarsOnCommandLine");
 			
+			log.info("Generate AntLR 4 parser.");
+			process.invoke(newInstance);
+			// Compile to code to target folder!
+			File src_gen_folder = new File("./" + ANTLR4GEN + SRC_GEN);
+			ArrayList<File> filesToCompile = Lists.newArrayList();
+			for (File child : src_gen_folder.listFiles(new FilenameFilter() {
+
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith("java");
+				}
+			})) {
+				filesToCompile.add(child);
+			}
+			List<String> optionList = new ArrayList<String>();
+			// set compiler's classpath to be same as the runtime's
+			optionList.addAll(Arrays.asList("-classpath",
+					System.getProperty("java.class.path") + ":" + file().getAbsolutePath(), "-d", TARGETFOLDER));
 		} catch (Exception e) {
 			throw new WrappedException(e);
 		} finally {

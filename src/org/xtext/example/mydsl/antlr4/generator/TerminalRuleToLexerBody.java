@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package com.itemis.xtext.codebuff;
+package org.xtext.example.mydsl.antlr4.generator;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.AbstractElement;
@@ -99,7 +99,6 @@ public class TerminalRuleToLexerBody extends XtextSwitch<String>{
 	}
 
 	private String toLexerString(String theString) {
-//		return Strings.convertToJavaString(value);
 		int len = theString.length();
 		int bufLen = len * 2;
 		if (bufLen < 0) {
@@ -148,11 +147,6 @@ public class TerminalRuleToLexerBody extends XtextSwitch<String>{
 					outBuffer.append('\\');
 					outBuffer.append('\'');
 					break;
-					// don't escape double quotes
-//				case '"':
-//					outBuffer.append('\\');
-//					outBuffer.append('"');
-//					break;
 				default:
 					if ((aChar < 0x0020) || (aChar > 0x007e)) {
 						outBuffer.append('\\');
@@ -204,15 +198,15 @@ public class TerminalRuleToLexerBody extends XtextSwitch<String>{
 
 	@Override
 	public String caseNegatedToken(NegatedToken object) {
-		result.append("~(");
+		result.append("~");
 		doSwitch(object.getTerminal());
-		result.append(")").append(Strings.emptyIfNull(object.getCardinality()));
+		result.append(Strings.emptyIfNull(object.getCardinality()));
 		return "";
 	}
 
 	@Override
 	public String caseUntilToken(UntilToken object) {
-		result.append("( options {greedy=false;} : . )*");
+		result.append(".*?");
 		doSwitch(object.getTerminal());
 		return "";
 	}
