@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.xtext.example.mydsl.antlr4.generator
+package com.itemis.xtext.antlr4.generator
 
 import com.google.inject.Inject
 import java.io.File
@@ -23,9 +23,9 @@ import org.eclipse.xtext.xtext.generator.parser.antlr.AntlrOptions
  */
 class Antlr4GrammarGeneratorFragment extends AbstractXtextGeneratorFragment {
 
-	@Inject Antlr4GrammarGenerator generator
+	@Inject org.xtext.example.mydsl.antlr4.generator.Antlr4GrammarGenerator generator
 	@Inject Antlr4ToolFacade antlrTool
-	@Inject Antlr4GrammarNaming naming
+	@Inject org.xtext.example.mydsl.antlr4.generator.Antlr4GrammarNaming naming
 	@Inject CodeConfig codeConfig
 
 	override generate() {

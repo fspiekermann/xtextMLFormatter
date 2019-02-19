@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.xtext.example.mydsl.antlr4.generator
-Bundle-SymbolicName: org.xtext.example.mydsl.antlr4.generator
+Bundle-SymbolicName: com.itemis.xtext.antlr4.generator
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: ITEMIS
 Automatic-Module-Name: org.xtext.example.mydsl.antlr4.generator

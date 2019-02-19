@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.xtext.example.mydsl.antlr4.generator
+package com.itemis.xtext.antlr4.generator
 
 import org.eclipse.xtext.Grammar
 import org.eclipse.xtext.xtext.generator.parser.antlr.AntlrGrammar
@@ -29,6 +29,6 @@ class Antlr4GrammarNaming extends GrammarNaming {
 	}
 	
 	override  AntlrGrammar getParserGrammar(Grammar it) {
-		new Antlr4Grammar(internalParserPackage, '''«grammarNamePrefix»«IF !combinedGrammar»Parser«ENDIF»''')
+		new org.xtext.example.mydsl.antlr4.generator.Antlr4Grammar(internalParserPackage, '''ï¿½grammarNamePrefixï¿½ï¿½IF !combinedGrammarï¿½Parserï¿½ENDIFï¿½''')
 	}
 }
