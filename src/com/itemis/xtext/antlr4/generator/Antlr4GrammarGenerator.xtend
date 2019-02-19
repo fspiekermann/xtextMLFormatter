@@ -36,32 +36,34 @@ class Antlr4GrammarGenerator extends AbstractAntlrGrammarGenerator {
 	override protected compileLexerHeader(Grammar it, AntlrOptions options) '''
 	'''
 
-	protected override String ebnfPredicate(AbstractElement it, AntlrOptions options) ''''''
+	protected override String ebnfPredicate(AbstractElement it, AntlrOptions options) '''
+	'''
 
-	protected override String dataTypeEbnfPredicate(AbstractElement it) ''''''
+	protected override String dataTypeEbnfPredicate(AbstractElement it) '''
+	'''
 
 	protected override dispatch compileRule(TerminalRule it, Grammar grammar, AntlrOptions options) '''
-		�IF options.isBacktrackLexer�
-			�IF !isSyntheticTerminalRule(it)�
-				�IF fragment�
-					fragment �ruleName� : �toLexerBody�;
-				�ELSE�
-					fragment �ruleName� : FRAGMENT_�ruleName�;
-					fragment FRAGMENT_�ruleName� : �toLexerBody�;
-				�ENDIF�
-			�ENDIF�
-		�ELSE�
-			�IF isSyntheticTerminalRule(it)�
-				fragment �ruleName� : ;
-			�ELSE�
-				�IF fragment�
+			«IF options.isBacktrackLexer»
+			«IF !isSyntheticTerminalRule(it)»
+				«IF fragment»
+					fragment «ruleName» : «toLexerBody»;
+				«ELSE»
+					fragment «ruleName» : FRAGMENT_«ruleName»;
+					fragment FRAGMENT_«ruleName» : «toLexerBody»;
+				«ENDIF»
+			«ENDIF»
+		«ELSE»
+			«IF isSyntheticTerminalRule(it)»
+				fragment «ruleName» : ;
+			«ELSE»
+				«IF fragment»
 					fragment 
-				�ENDIF�
-				�ruleName� : �toLexerBody�
-				�IF shouldBeSkipped(grammar)�
+				«ENDIF»
+					«ruleName» : «toLexerBody»
+				«IF shouldBeSkipped(grammar)»
 					 -> channel(HIDDEN)
-					�ENDIF�;
-			�ENDIF�
-		�ENDIF�
+				«ENDIF»;
+			«ENDIF»
+		«ENDIF»
 	'''
 }

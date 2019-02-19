@@ -29,6 +29,6 @@ class Antlr4GrammarNaming extends GrammarNaming {
 	}
 	
 	override  AntlrGrammar getParserGrammar(Grammar it) {
-		new org.xtext.example.mydsl.antlr4.generator.Antlr4Grammar(internalParserPackage, '''�grammarNamePrefix��IF !combinedGrammar�Parser�ENDIF�''')
+		new org.xtext.example.mydsl.antlr4.generator.Antlr4Grammar(internalParserPackage, '''«grammarNamePrefix»«IF !combinedGrammar»Parser«ENDIF»''')
 	}
 }
